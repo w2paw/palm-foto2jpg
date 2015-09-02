@@ -38,6 +38,8 @@ workHashes='/home/juser/Pictures/palm/palm-sha1-hashs'
  # test for ending in '.jpg.pdb'
  # test for start w/ "Photo"
  # test for usable date (e.g. '_101514_' becomes 15oct2014 )
+echo "${workFile}" | grep -qoE "_[0-9]{6}" ; x=$?
+
  # test results of the file command, should be "data"
 
 # hash input file and save to variable
@@ -57,7 +59,7 @@ fi
 
 # if not, we copy locally and convert to jpg. 
 
-copy ${workFile} ${workDIR} --no-clobber ; x=$x
+cp --no-clobber ${workFile} ${workDIR} ; x=$x
 
 error="file already exists in working directory, aborting"
 if [ $x = 1 ] ; then
@@ -69,19 +71,20 @@ localCopy=""  #extract local file name
 
 pilot-foto -c ${localCopy}
 
-#  Edit new photo w/ `exiftool` to reset date to the date it was taken on. This
-# is absolutly critical if we want to later import the photos into `shotwell`.
-#+ In fact, that is the main purpose why this utility was written.
+#  Edit new photo w/ `exiftool` to reset date to the date it was taken on.
+ #exiftool -EXIF:CreateDate='2013:11:08 12:57:07' Photo_123110_001.jpg #to add a tag
+ #exiftool  -EXIF:CreateDate  100_2652.JPG # to dump current file name
+# move the .jpg into the proper shotwell directory structure since that's not automatic
+ # might need to do a `mkdir -p`
 
-# Now hash the original .pdb file again, piping the output to the end of the
-#+ ${workHashes} file
+
+# Now copy the hash to the end of the ${workHashes} file
 
 ########
 # cleanup
 ########
 
-# remove our local copy of the .pdb file, leave converted .jpg and we never touch the original file of course.
-
+# remove our local copy of the .pdb file
 rm ${localCopy}
 
 # exit w/o error
