@@ -34,11 +34,40 @@ workHashes='/home/juser/Pictures/palm/palm-sha1-hashs'
 # Validate input file, can we get a date from the file name? Wouid the converted
 #+ name collide with an existing file name in our ${workDIR} ?
 
+ # test file exists, and is readable
+ # test for ending in '.jpg.pdb'
+ # test for start w/ "Photo"
+ # test for usable date (e.g. '_101514_' becomes 15oct2014 )
+ # test results of the file command, should be "data"
+
 # hash input file and save to variable
+
+hash=$(sha1sum ${workFile})
 
 # check to see if hash exist already (i.e. "have we converted it yet?")
 
-# if not, we convert to jpg. 
+hashOnly=$(echo -n ${hash:0:40}) # extract first 40 char
+
+  # test if only [0-9abcdef]
+
+grep -q "${hashOnly}" "${workHashes}" ; x=$? # 0 if match, 1 otherwise
+if [ $x = 0 ] ; then 
+  exit 0  #exit, we can skip this one
+fi       
+
+# if not, we copy locally and convert to jpg. 
+
+copy ${workFile} ${workDIR} --no-clobber ; x=$x
+
+error="file already exists in working directory, aborting"
+if [ $x = 1 ] ; then
+  echo "ERROR: $error"
+  exit 1
+fi
+
+localCopy=""  #extract local file name
+
+pilot-foto -c ${localCopy}
 
 #  Edit new photo w/ `exiftool` to reset date to the date it was taken on. This
 # is absolutly critical if we want to later import the photos into `shotwell`.
@@ -52,6 +81,8 @@ workHashes='/home/juser/Pictures/palm/palm-sha1-hashs'
 ########
 
 # remove our local copy of the .pdb file, leave converted .jpg and we never touch the original file of course.
+
+rm ${localCopy}
 
 # exit w/o error
 exit 0  #nothing below should be run
