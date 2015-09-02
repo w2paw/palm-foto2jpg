@@ -9,7 +9,12 @@
 #+ just a plain .jpg; does some tricky stuff with `exiftool` to add/revise the
 #+ photo date into a date derived from the filename; adds the hash and original
 #+ filename to the growing hash file; and then finally deletes the working
-#+ *copy* of the original file - at no time is the original file moved or touched
+#+ *copy* of the original file - at no time is the original file moved or
+#+ touched. 
+
+#  The program should exit immedatly if something goes wrong: filename isn't a 
+#+ good match, not allowd to read file, etc. Useful error messages should be 
+#+ printed to stderr
 
 # Or at least that's the plan. legacy code is below the divider:
 
@@ -20,7 +25,36 @@
 
 workDIR="/home/juser/Pictures/palm"
 workFile="$*"
+workHashes='/home/juser/Pictures/palm/palm-sha1-hashs'
 
+########
+# Main
+########
+
+# Validate input file, can we get a date from the file name? Wouid the converted
+#+ name collide with an existing file name in our ${workDIR} ?
+
+# hash input file and save to variable
+
+# check to see if hash exist already (i.e. "have we converted it yet?")
+
+# if not, we convert to jpg. 
+
+#  Edit new photo w/ `exiftool` to reset date to the date it was taken on. This
+# is absolutly critical if we want to later import the photos into `shotwell`.
+#+ In fact, that is the main purpose why this utility was written.
+
+# Now hash the original .pdb file again, piping the output to the end of the
+#+ ${workHashes} file
+
+########
+# cleanup
+########
+
+# remove our local copy of the .pdb file, leave converted .jpg and we never touch the original file of course.
+
+# exit w/o error
+exit 0  #nothing below should be run
 
 #-----------------------------
 # palm-foto-convert.sh - convert synced photo pdb into jpgs, make sure they're converted only once,
