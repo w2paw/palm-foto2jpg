@@ -1,5 +1,28 @@
 #!/bin/bash
 
+# evoke with a single file name:
+
+#     palm-foto-convert.sh /filename/
+
+#  This quick and dirty script does a sha1 hash, checks to see if it's a new 
+#+ photo, and if so copies to import directory; converts the .jpg.pdb format to
+#+ just a plain .jpg; does some tricky stuff with `exiftool` to add/revise the
+#+ photo date into a date derived from the filename; adds the hash and original
+#+ filename to the growing hash file; and then finally deletes the working
+#+ *copy* of the original file - at no time is the original file moved or touched
+
+# Or at least that's the plan. legacy code is below the divider:
+
+
+########
+##  Setup 
+########
+
+workDIR="/home/juser/Pictures/palm"
+workFile="$*"
+
+
+#-----------------------------
 # palm-foto-convert.sh - convert synced photo pdb into jpgs, make sure they're converted only once,
 #			 and add exif data for an easy import into shotwell.
 
@@ -10,7 +33,6 @@
 fotoSource="/home/juser/jpilot/last-sync/"
 fotoTarget="/home/juser/jpilot/extracted-photos/test2"
 foto1sha="/home/juser/jpilot/extracted-photos/test2/foto1sha.txt"
-#  /home/juser/Pictures/palm
 
 check_for_existing_hash () {
     # "0" means a match,  "1" means no match, "$1" is the hash
