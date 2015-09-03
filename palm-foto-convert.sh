@@ -73,6 +73,7 @@ hashOnly=$(echo -n ${hashIt:0:40}) # extract first 40 char
 
 grep -i -q "${hashOnly}" "${workHashes}" ; x=$? # 0 if match, 1 otherwise 
 if [ $x = 0 ] ; then 
+  echo; echo "--- Dupe! We'll just skip this one."
   exit 0  #exit, we can skip this one
 fi       
 
@@ -90,6 +91,7 @@ fi
 
 ##echo "DEBUG:5"
 
+echo
 /usr/bin/pilot-foto -c "${localCopy}" #convert to .jpg
 
 ##echo "DEBUG:6"
