@@ -18,6 +18,11 @@
 
 # Or at least that's the plan. 
 
+#  Note: Y2K issue. Filenames that place the creation year as >90 are assumed 
+#+ to be in the 20th century, e.g Photo_123199_001.jpg = '31dec99' and assumed
+#+ to be from year 1999. This is only an issue to the exif tag that's written
+#+ to the photo. Fix this software before the year 2090.
+
 
 ########
 ##  Setup 
@@ -60,7 +65,7 @@ fi
 
 # if not, we copy locally and convert to jpg. 
 
-cp --no-clobber ${workFile} ${workDIR} ; x=$x
+cp --no-clobber ${workFile} ${workDIR} ; x=$?  #copy locally
 
 error="file already exists in working directory, aborting"
 if [ $x = 1 ] ; then
@@ -69,13 +74,15 @@ if [ $x = 1 ] ; then
 fi
 
 
-pilot-foto -c ${localCopy}
+pilot-foto -c ${localCopy}  #convert to .jpg
 
 #  Edit new photo w/ `exiftool` to reset date to the date it was taken on.
  #exiftool -EXIF:CreateDate='2013:11:08 12:57:07' Photo_123110_001.jpg #to add a tag
  #exiftool  -EXIF:CreateDate  100_2652.JPG # to dump current file name
-# move the .jpg into the proper shotwell directory structure since that's not automatic
- # might need to do a `mkdir -p`
+
+year="${localCopy:10:2}" # extract 2 digit year
+
+exiftool -EXIF:CreateDate='2013:11:08 12:34:56' "${localCopy}"
 
 
 # Now copy the hash to the end of the ${workHashes} file
