@@ -9,14 +9,15 @@
 #+ just a plain .jpg; does some tricky stuff with `exiftool` to add/revise the
 #+ photo date into a date derived from the filename; adds the hash and original
 #+ filename to the growing hash file; and then finally deletes the working
-#+ *copy* of the original file - at no time is the original file moved or
-#+ touched. 
+#+ *copy* of the original file. 
+
+#  At no time is the original file moved or touched. 
 
 #  The program should exit immedatly if something goes wrong: filename isn't a 
-#+ good match, not allowd to read file, etc. Useful error messages should be 
+#+ good match, not allowed to read file, etc. Useful error messages should be 
 #+ printed to stderr
 
-# Or at least that's the plan. 
+#  Or at least that's the plan. 
 
 #  Note: Y2K issue. Filenames that place the creation year as >90 are assumed 
 #+ to be in the 20th century, e.g Photo_123199_001.jpg = '31dec99' and assumed
@@ -31,7 +32,10 @@
 workDIR="/home/juser/Pictures/palm"
 workHashes='/home/juser/Pictures/palm/palm-sha1-hashs'
 workFile="$*"
-localCopy=${workFile##/*/}      # remove path
+localCopy="{workFile##/*/}"     # remove path
+
+hashIt=""
+hashOnly=""
 
 ########
 # Main
@@ -50,7 +54,7 @@ echo "${workFile}" | grep -qoE "_[0-9]{6}" ; x=$?
 
 # hash input file and save to variable
 
-hash=$(sha1sum ${workFile})
+hashIt=$(sha1sum ${workFile})
 
 # check to see if hash exist already (i.e. "have we converted it yet?")
 
@@ -87,6 +91,9 @@ exiftool -EXIF:CreateDate='2013:11:08 12:34:56' "${localCopy}"
 
 # Now copy the hash to the end of the ${workHashes} file
 
+echo "${hashIt}" >>"${workHashes}"
+
+
 ########
 # cleanup
 ########
@@ -96,4 +103,4 @@ rm "${localCopy}"
 rm "${localCopy/.pdb/}_original"  #dupe made by exiftool
 
 # exit w/o error
-exit 0  #nothing below should be run
+exit 0  #nothing below this line should be run
