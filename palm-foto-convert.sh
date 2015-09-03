@@ -16,7 +16,7 @@
 #+ good match, not allowd to read file, etc. Useful error messages should be 
 #+ printed to stderr
 
-# Or at least that's the plan. legacy code is below the divider:
+# Or at least that's the plan. 
 
 
 ########
@@ -24,8 +24,9 @@
 ########
 
 workDIR="/home/juser/Pictures/palm"
-workFile="$*"
 workHashes='/home/juser/Pictures/palm/palm-sha1-hashs'
+workFile="$*"
+localCopy=${workFile##/*/}      # remove path
 
 ########
 # Main
@@ -67,7 +68,6 @@ if [ $x = 1 ] ; then
   exit 1
 fi
 
-localCopy=""  #extract local file name
 
 pilot-foto -c ${localCopy}
 
@@ -86,7 +86,7 @@ pilot-foto -c ${localCopy}
 
 # remove our local copy of the .pdb file
 rm "${localCopy}"
-#rm "${localCopy} - .pdb +  _original" #dupe made by exiftool
+rm "${localCopy/.pdb/}_original"  #dupe made by exiftool
 
 # exit w/o error
 exit 0  #nothing below should be run
