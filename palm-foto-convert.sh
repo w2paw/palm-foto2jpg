@@ -32,12 +32,15 @@
 workDIR="/home/juser/Pictures/palm"
 workHashes='/home/juser/Pictures/palm/palm-sha1-hashs'
 workFile="$*"
-localCopy="{workFile##/*/}"     # remove path
+localCopy="${workFile##/*/}"     # remove path
 
 hashIt=""
 hashOnly=""
 
-########
+##echo "DEBUG:1"
+
+
+#######
 # Main
 ########
 
@@ -52,14 +55,20 @@ echo "${workFile}" | grep -qoE "_[0-9]{6}" ; x=$?
 
  # test results of the file command, should be "data"
 
+##echo "DEBUG:2 "'$x:'"$x"  
+
+
 # hash input file and save to variable
 
-hashIt=$(sha1sum ${workFile})
+hashIt="$(sha1sum ${workFile})"
 
 # check to see if hash exist already (i.e. "have we converted it yet?")
 
-hashOnly=$(echo -n ${hash:0:40}) # extract first 40 char
+hashOnly=$(echo -n ${hashIt:0:40}) # extract first 40 char
 
+##echo '$hashIt'" $hashIt" 
+##echo '$hashOnly'" $hashOnly" 
+##echo "DEBUG:3   " 
   # test if only [0-9abcdef]
 
 grep -i -q "${hashOnly}" "${workHashes}" ; x=$? # 0 if match, 1 otherwise 
@@ -67,18 +76,23 @@ if [ $x = 0 ] ; then
   exit 0  #exit, we can skip this one
 fi       
 
+##echo "DEBUG:4"
+
 # if not, we copy locally and convert to jpg. 
 
-cp --no-clobber ${workFile} ${workDIR} ; x=$?  #copy locally
-
-error="file already exists in working directory, aborting"
-if [ $x = 1 ] ; then
-  echo "ERROR: $error"
-  exit 1
+##echo "DEBUG: ${workDIR}/${localCopy}"
+if [ ! -e "${workDIR}/${localCopy}" ] ; then
+  cp --no-clobber ${workFile} ${workDIR} #; x=$?  #copy locally
+  else
+    echo "ERROR: file already exists in working directory, aborting"
+    exit 1
 fi
 
+##echo "DEBUG:5"
 
-pilot-foto -c ${localCopy}  #convert to .jpg
+/usr/bin/pilot-foto -c "${localCopy}" #convert to .jpg
+
+##echo "DEBUG:6"
 
 #  Edit new photo w/ `exiftool` to reset date to the date it was taken on.
  #exiftool -EXIF:CreateDate='2013:11:08 12:57:07' Photo_123110_001.jpg #to add a tag
@@ -86,13 +100,16 @@ pilot-foto -c ${localCopy}  #convert to .jpg
 
 year="${localCopy:10:2}" # extract 2 digit year
 
-exiftool -EXIF:CreateDate='2013:11:08 12:34:56' "${localCopy}"
+exiftool -EXIF:CreateDate='2013:11:08 12:34:56' "${localCopy/.pdb/}" #convert
+                                            # the one that doesn't end w/ .pdb
 
+##echo "DEBUG:7"
 
 # Now copy the hash to the end of the ${workHashes} file
 
 echo "${hashIt}" >>"${workHashes}"
 
+##echo "DEBUG:8"
 
 ########
 # cleanup
