@@ -24,6 +24,10 @@
 #+ to be from year 1999. This is only an issue to the exif tag that's written
 #+ to the photo. Fix this software before the year 2090.
 
+#  First version 02sep2015 - code works but I need to add file checks and a
+#+ good error trapping subroutine. It looks like I ran it quite a few times
+#+ without the EXIF part fully coded, whoops. Disabled that part for the moment.
+
 
 ########
 ##  Setup 
@@ -32,9 +36,9 @@
 workDIR="/home/juser/Pictures/palm"
 workHashes='/home/juser/Pictures/palm/palm-sha1-hashs'
 workFile="$*"
-localCopy="${workFile##/*/}"     # remove path
+localCopy="${workFile##/*/}"     #fu here removes the path
 
-hashIt=""
+hashIt=""  #used later, reset here as a good coding practice
 hashOnly=""
 
 ##echo "DEBUG:1"
@@ -100,9 +104,9 @@ echo
  #exiftool -EXIF:CreateDate='2013:11:08 12:57:07' Photo_123110_001.jpg #to add a tag
  #exiftool  -EXIF:CreateDate  100_2652.JPG # to dump current file name
 
-year="${localCopy:10:2}" # extract 2 digit year
+#year="${localCopy:10:2}" # extract 2 digit year
 
-exiftool -EXIF:CreateDate='2013:11:08 12:34:56' "${localCopy/.pdb/}" #convert
+#exiftool -EXIF:CreateDate='2013:11:08 12:34:56' "${localCopy/.pdb/}" #convert
                                             # the one that doesn't end w/ .pdb
 
 ##echo "DEBUG:7"
