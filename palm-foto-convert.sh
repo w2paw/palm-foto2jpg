@@ -85,7 +85,8 @@ pilot-foto -c ${localCopy}
 ########
 
 # remove our local copy of the .pdb file
-rm ${localCopy}
+rm "${localCopy}"
+#rm "${localCopy} - .pdb +  _original" #dupe made by exiftool
 
 # exit w/o error
 exit 0  #nothing below should be run
